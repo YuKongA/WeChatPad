@@ -1,0 +1,2 @@
+-keep class com.rarnu.wechatpad.XposedInit { <init>(); }
+-keep class com.rarnu.dex.DexHelper { *; }

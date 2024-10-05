@@ -1,6 +1,10 @@
+@file:Suppress("UnstableApiUsage")
+
+import com.android.build.gradle.internal.api.BaseVariantOutputImpl
+
 plugins {
-    id("com.android.application") version "8.1.2"
-    id("org.jetbrains.kotlin.android") version "1.9.20"
+    id("com.android.application") version "8.7.0"
+    id("org.jetbrains.kotlin.android") version "2.0.20"
     id("org.lsposed.lsplugin.resopt") version "1.5"
     id("org.lsposed.lsplugin.apksign") version "1.4"
     id("org.lsposed.lsplugin.apktransform") version "1.2"
@@ -17,19 +21,10 @@ apksign {
     keyPasswordProperty = "releaseKeyPassword"
 }
 
-apktransform {
-    copy {
-        when (it.buildType) {
-            "release" -> file("${it.name}/WeChatPad_${appVerName}.apk")
-            else -> null
-        }
-    }
-}
-
 cmaker {
     default {
         targets("dexhelper")
-        abiFilters("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+        abiFilters("arm64-v8a")
         arguments += "-DANDROID_STL=none"
         cppFlags += "-Wno-c++2b-extensions"
     }
@@ -41,52 +36,43 @@ cmaker {
 
 android {
     namespace = "com.rarnu.wechatpad"
-    compileSdk = 34
-    buildToolsVersion = "34.0.0"
-    ndkVersion = "26.0.10792818"
+    compileSdk = 35
+    ndkVersion = "28.0.12433566"
 
     buildFeatures {
         prefab = true
-        buildConfig = true
     }
 
     defaultConfig {
         applicationId = "com.rarnu.wechatpad"
         minSdk = 24
-        targetSdk = 34  // Target Android U
+        targetSdk = 35
         versionCode = appVerCode
         versionName = appVerName
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            vcsInfo.include = false
+            dependenciesInfo.includeInApk = false
+            proguardFiles("proguard-rules.pro")
         }
     }
 
     compileOptions {
-        sourceCompatibility(JavaVersion.VERSION_1_8)
-        targetCompatibility(JavaVersion.VERSION_1_8)
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs = listOf(
-            "-Xno-param-assertions",
-            "-Xno-call-assertions",
-            "-Xno-receiver-assertions",
-            "-language-version=1.9",
-        )
+        sourceCompatibility(JavaVersion.VERSION_21)
+        targetCompatibility(JavaVersion.VERSION_21)
     }
 
     packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        resources.excludes += "**"
+        applicationVariants.all {
+            outputs.all {
+                (this as BaseVariantOutputImpl).outputFileName = "WeChatPad-$versionName.apk"
+            }
         }
-    }
-
-    androidResources {
-        additionalParameters += arrayOf("--allow-reserved-package-id", "--package-id", "0x23")
     }
 
     externalNativeBuild {
@@ -99,6 +85,6 @@ android {
 
 dependencies {
     compileOnly("de.robv.android.xposed:api:82")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.20")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.0.20")
     implementation("dev.rikka.ndk.thirdparty:cxx:1.2.0")
 }

@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="app_name">WeChatPad</string>
-    <string name="xposed_description">强制使用微信平板模式</string>
+    <string name="xposed_description">允许平板和手机同时登录</string>
 </resources>

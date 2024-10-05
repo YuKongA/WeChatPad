@@ -24,7 +24,7 @@ class XposedInit : IXposedHookLoadPackage {
         val findClassIfExists = XposedHelpers.findClassIfExists("com.tencent.tinker.loader.app.TinkerApplication", lpparam.classLoader)
         if (findClassIfExists != null) {
             try {
-                XposedHelpers.findAndHookMethod(findClassIfExists, "getTinkerFlags", object: XC_MethodHook() {
+                XposedHelpers.findAndHookMethod(findClassIfExists, "getTinkerFlags", object : XC_MethodHook() {
                     override fun afterHookedMethod(param: MethodHookParam) {
                         try {
                             param.result = 0
@@ -59,7 +59,7 @@ class XposedInit : IXposedHookLoadPackage {
             val methodIdx = if (findMethodUsingString.isEmpty()) null else findMethodUsingString[0]
             if (methodIdx != null) {
                 val decodeMethodIndex = dexHelper.decodeMethodIndex(methodIdx)
-                XposedBridge.hookMethod(decodeMethodIndex, object: XC_MethodHook() {
+                XposedBridge.hookMethod(decodeMethodIndex, object : XC_MethodHook() {
                     override fun beforeHookedMethod(param: MethodHookParam) {
                         param.result = true
                     }

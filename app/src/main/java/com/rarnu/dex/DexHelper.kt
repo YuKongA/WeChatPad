@@ -45,8 +45,6 @@ class DexHelper(private val classLoader: ClassLoader) : Object(), AutoCloseable,
 
     external override fun close()
 
-    override fun finalize() {
-        close()
-    }
+    override fun finalize() { close() }
 
 }
